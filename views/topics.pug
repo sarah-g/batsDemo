@@ -1,0 +1,137 @@
+extends ../node_modules/jade-bootstrap/_bootstrap
+
+append styles
+    link(href='https://fonts.googleapis.com/css?family=Montserrat' rel='stylesheet')
+    link(href='/stylesheets/starter-template.css', rel='stylesheet')
+    link(href='/stylesheets/style.css', rel='stylesheet')
+
+append body
+
+    .container-fluid.align-right
+        form(action='/logout')
+            +submit-primary("Log out", type='submit')
+
+    .container.align-center
+        .col-md-4
+            h1.topics-title echo box demo
+            br
+            small.topics-small live bat data from Echo Box
+            //br
+            //button.btn.btn-lg.btn-primary(type='button' onclick='playAnimation("circle1")') Play
+
+        .col-md-6
+            .col-md-4
+                .circletainer#circle1
+                    img.center(src="/images/bat_outline.png")
+                h4.caption Common Pipistrelle
+            .col-md-4
+                .circletainer#circle2
+                    img.center(src="/images/bat_outline.png")
+                h4.caption Soprano Pipistrelle
+            .col-md-4
+                .circletainer#circle3
+                    img.center(src="/images/bat_outline.png")
+                h4.caption Nathusius' Pipistrelle
+            .col-md-4
+                .circletainer#circle4
+                    img.center(src="/images/bat_outline.png")
+                h4.caption Leisler
+            .col-md-4
+                .circletainer#circle5
+                    img.center(src="/images/bat_outline.png")
+                h4.caption Noctule
+            .col-md-4
+                .circletainer#circle6
+                    img.center(src="/images/bat_outline.png")
+                h4.caption Daubenton
+
+    script.
+        var playAnimation = function(id) {
+            //console.log('button clicked');
+            var circleDiv = document.createElement('div');
+            circleDiv.classList.add('circle');
+            circleDiv.classList.add('transform');
+            var e1 = document.getElementById(id);
+            e1.appendChild(circleDiv);
+
+            circleDiv.addEventListener("webkitAnimationEnd", function(e){
+                circleDiv.parentNode.removeChild(circleDiv);
+            });
+            circleDiv.addEventListener("oanimationend", function (e) {
+                circleDiv.parentNode.removeChild(circleDiv);
+            });
+            circleDiv.addEventListener("msAnimationEnd", function (e) {
+                circleDiv.parentNode.removeChild(circleDiv);
+            });
+            circleDiv.addEventListener("animationend", function (e) {
+                circleDiv.parentNode.removeChild(circleDiv);
+            });
+        }
+
+    script.
+        var token = "#{token}";
+        var topic = "#{topic}";
+        var demo = new EventSource("https://realtime.opensensors.io/v1/events/topics/"+topic+"?token=" + token);
+        demo.onmessage = function (event) {
+            var info = JSON.parse(event.data);
+            var json = JSON.parse(info.message);
+
+            var epoch = json.ts;
+            var species = json.cl[0].c;
+            var prob = json.cl[0].p;
+
+            /*document.getElementById("lastDate").innerHTML = new Date(+epoch);
+             document.getElementById("species").innerHTML = species;
+             document.getElementById("probability").innerHTML = prob;*/
+
+            if (species == "Pipistrellus pipistrellus"){
+                playAnimation("circle1");
+            }else if(species == "Pipistrellus pygmaeus") {
+                playAnimation("circle2");
+            }else if(species == "Pipistrellus nathusii") {
+                playAnimation("circle3");
+            }else if (species == "Nyctalus leisleri"){
+                playAnimation("circle4");
+            }else if (species == "Nyctalus noctula"){
+                playAnimation("circle5");
+            }else if (species == "Myotis daubentonii"){
+                playAnimation("circle6");
+            }else{
+                console.log('species unknown: '+species);
+            }
+        }
+
+block scripts
+    script(src='/javascripts/main.js' type='text/javascript')
+
+
+    //.col-md-4
+    //    .circletainer#circle1
+    //        img.center(src="/images/bat_silhouette_blue.png")
+    //    h4.caption Common Pipistrelle
+    //
+    //.col-md-4
+    //    .circletainer#circle2
+    //        img.center(src="/images/bat_silhouette_green.png")
+    //    h4.caption Soprano Pipistrelle
+    //
+    //.col-md-4
+    //    .circletainer#circle3
+    //        img.center(src="/images/bat_silhouette_orange.png")
+    //    h4.caption Nathusius' Pipistrelle
+    //
+    //.col-md-4
+    //    .circletainer#circle4
+    //        img.center(src="/images/bat_silhouette_pink.png")
+    //    h4.caption Leisler
+    //
+    //.col-md-4
+    //    .circletainer#circle5
+    //        img.center(src="/images/bat_silhouette_yellow.png")
+    //    h4.caption Noctule
+    //
+    //.col-md-4
+    //    .circletainer#circle6
+    //        img.center(src="/images/bat_silhouette_purple.png")
+    //        h4.caption Daubenton
+
